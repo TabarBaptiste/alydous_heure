@@ -7,9 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User implements PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -173,4 +174,17 @@ class User implements PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getUserIdentifier(): string
+    {
+        // Ici on retourne l'email comme identifiant unique
+        return (string) $this->email;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Si tu stockes des données sensibles temporairement (ex: plainPassword), les effacer ici
+        // Par défaut, rien à faire
+    }
+
 }
