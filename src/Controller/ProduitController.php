@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/produit')]
+#[Route('/api/produit')]
 final class ProduitController extends AbstractController
 {
     #[Route('', name: 'api_produits', methods: ['GET'])]

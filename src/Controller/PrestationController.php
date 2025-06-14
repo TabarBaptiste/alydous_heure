@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/prestation')]
+#[Route('/api/prestation')]
 final class PrestationController extends AbstractController
 {
     #[Route('', name: 'api_prestations', methods: ['GET'])]

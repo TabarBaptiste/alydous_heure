@@ -38,10 +38,10 @@
 
 ## 📅 DISPONIBILITÉS
 
-* [ ] 📄 Récupérer les disponibilités de la semaine
-* [ ] ✅ Ajouter une plage horaire disponible (admin)
-* [ ] 🔧 Modifier une disponibilité (admin)
-* [ ] ❌ Supprimer une disponibilité (admin)
+* [x] 📄 Récupérer les disponibilités de la semaine
+* [x] ✅ Ajouter une plage horaire disponible (admin)
+* [x] 🔧 Modifier une disponibilité (admin)
+* [x] ❌ Supprimer une disponibilité (admin)
 
 Qui retourne les créneaux disponibles calculés dynamiquement.
 
