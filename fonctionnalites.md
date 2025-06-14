@@ -5,7 +5,7 @@
 ### Utilisateurs (clients ou admin)
 
 * [ ] 🔒 Inscription (client)
-* [ ] 🔒 Connexion (JWT ou autre)
+* [x] 🔒 Connexion (JWT ou autre)
 * [ ] 🔒 Déconnexion (côté front, mais refresh côté backend)
 * [ ] 🔁 Refresh token (si besoin)
 * [ ] 🔧 Modifier ses informations personnelles
@@ -18,21 +18,21 @@
 
 ## 🛍️ PRODUITS
 
-* [ ] 📄 Récupérer la liste des produits (filtrés par catégorie)
-* [ ] 📄 Récupérer un produit par ID
-* [ ] ✅ Ajouter un produit (admin)
-* [ ] 🔧 Modifier un produit (admin)
-* [ ] ❌ Supprimer un produit (admin)
+* [x] 📄 Récupérer la liste des produits (filtrés par catégorie)
+* [x] 📄 Récupérer un produit par ID
+* [x] ✅ Ajouter un produit (admin)
+* [x] 🔧 Modifier un produit (admin)
+* [x] ❌ Supprimer un produit (admin)
 
 ---
 
 ## 🧴 PRESTATIONS
 
-* [ ] 📄 Récupérer la liste des prestations (par catégorie)
-* [ ] 📄 Récupérer une prestation par ID
-* [ ] ✅ Ajouter une prestation (admin)
-* [ ] 🔧 Modifier une prestation (admin)
-* [ ] ❌ Supprimer une prestation (admin)
+* [x] 📄 Récupérer la liste des prestations (par catégorie)
+* [x] 📄 Récupérer une prestation par ID
+* [x] ✅ Ajouter une prestation (admin)
+* [x] 🔧 Modifier une prestation (admin)
+* [x] ❌ Supprimer une prestation (admin)
 
 ---
 

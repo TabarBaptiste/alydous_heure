@@ -40,6 +40,14 @@ class Produit
     public function __construct()
     {
         $this->achats = new ArrayCollection();
+        // Définit la catégorie par défaut à l'ID 6
+        // Attention : ceci suppose que l'entité Categorie avec id=6 existe déjà
+        // et que l'EntityManager ou un repository est accessible ici.
+        // Sinon, il faut injecter la catégorie lors de la création du Produit.
+        // Exemple d'initialisation simple (non recommandé en production) :
+        // $this->categorie = (new Categorie())->setId(6);
+
+        // Pour une vraie application, il faut injecter la catégorie depuis le service ou le contrôleur.
     }
 
     public function getId(): ?int
