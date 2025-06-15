@@ -67,6 +67,15 @@ Qui retourne les créneaux disponibles calculés dynamiquement.
 
 ---
 
+## 📚 CATÉGORIES (Produits & Prestations)
+
+* [x] 📄 Lister toutes les catégories
+* [x] ✅ Ajouter une catégorie (admin)
+* [x] 🔧 Modifier une catégorie (admin)
+* [x] ❌ Supprimer une catégorie (admin)
+
+---
+
 ## 💬 TÉMOIGNAGES / AVIS
 
 * [ ] 📄 Lister les témoignages (public)
@@ -88,15 +97,6 @@ Qui retourne les créneaux disponibles calculés dynamiquement.
 * [ ] ✅ S’inscrire à la newsletter
 * [ ] ❌ Se désinscrire
 * [ ] 📤 Admin : envoyer une newsletter (si fait depuis back)
-
----
-
-## 📚 CATÉGORIES (Produits & Prestations)
-
-* [ ] 📄 Lister toutes les catégories
-* [ ] ✅ Ajouter une catégorie (admin)
-* [ ] 🔧 Modifier une catégorie (admin)
-* [ ] ❌ Supprimer une catégorie (admin)
 
 ---
 
