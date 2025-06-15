@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\PrestationRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PrestationRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PrestationRepository::class)]
 class Prestation
@@ -16,15 +17,18 @@ class Prestation
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\Column]
     private ?float $prix = null;
 
+    #[Groups(['reservation:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $duree = null;
 
@@ -34,7 +38,7 @@ class Prestation
     /**
      * @var Collection<int, Reservation>
      */
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'prestation')]
     private Collection $reservations;
 
     public function __construct()
@@ -119,7 +123,7 @@ class Prestation
     {
         if (!$this->reservations->contains($reservation)) {
             $this->reservations->add($reservation);
-            $reservation->setUser($this);
+            $reservation->setPrestation($this);
         }
 
         return $this;
@@ -129,8 +133,8 @@ class Prestation
     {
         if ($this->reservations->removeElement($reservation)) {
             // set the owning side to null (unless already changed)
-            if ($reservation->getUser() === $this) {
-                $reservation->setUser(null);
+            if ($reservation->getPrestation() === $this) {
+                $reservation->setPrestation(null);
             }
         }
 

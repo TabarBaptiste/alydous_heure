@@ -6,6 +6,8 @@ use App\Repository\ReservationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Enum\StatutReservation;
+use App\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -15,25 +17,33 @@ class Reservation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
-    private ?Prestation $user = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reservations')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['reservation:read'])]
+    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[Groups(['reservation:read'])]
     private ?Prestation $prestation = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['reservation:read'])]
     private ?\DateTime $date = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[Groups(['reservation:read'])]
     private ?\DateTime $startTime = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?string $endTime = null;
+    #[Groups(['reservation:read'])]
+    private ?\DateTime $endTime = null;
 
-#[ORM\Column(enumType: StatutReservation::class)]
-private StatutReservation $statut;
+    #[ORM\Column(enumType: StatutReservation::class)]
+    #[Groups(['reservation:read'])]
+    private StatutReservation $statut;
 
     #[ORM\Column]
+    #[Groups(['reservation:read'])]
     private ?\DateTimeImmutable $created_at = null;
 
     public function __construct()
@@ -46,12 +56,12 @@ private StatutReservation $statut;
         return $this->id;
     }
 
-    public function getUser(): ?Prestation
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?Prestation $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
@@ -94,12 +104,12 @@ private StatutReservation $statut;
         return $this;
     }
 
-    public function getEndTime(): ?string
+    public function getEndTime(): ?\DateTime
     {
         return $this->endTime;
     }
 
-    public function setEndTime(string $endTime): static
+    public function setEndTime(\DateTime $endTime): static
     {
         $this->endTime = $endTime;
 

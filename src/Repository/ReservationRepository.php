@@ -16,6 +16,22 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
+    public function findConflictingReservations(\DateTime $date, \DateTime $start, \DateTime $end): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.date = :date')
+            ->andWhere('
+            (:start BETWEEN r.startTime AND r.endTime)
+         OR (:end BETWEEN r.startTime AND r.endTime)
+         OR (r.startTime BETWEEN :start AND :end)
+        ')
+            ->setParameter('date', $date)
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Reservation[] Returns an array of Reservation objects
     //     */

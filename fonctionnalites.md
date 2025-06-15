@@ -49,12 +49,12 @@ Qui retourne les créneaux disponibles calculés dynamiquement.
 
 ## 📆 RÉSERVATIONS
 
-* [ ] 📄 Lister ses propres réservations (client)
-* [ ] 📄 Admin : lister toutes les réservations
-* [ ] ✅ Prendre rendez-vous (client)
-* [ ] 🔧 Modifier un rendez-vous (client ou admin)
-* [ ] ❌ Annuler un rendez-vous (client ou admin)
-* [ ] 🔁 Admin : changer le statut (confirmé / annulé)
+* [x] ✅ Prendre rendez-vous (client)
+* [x] 📄 Lister ses propres réservations (client)
+* [x] 📄 Admin : lister toutes les réservations
+* [x] 🔧 Modifier un rendez-vous (client ou admin)
+* [x] ❌ Annuler un rendez-vous (client ou admin)
+* [x] 🔁 Admin : changer le statut (confirmé / annulé)
 
 ---
 
