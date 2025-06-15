@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CategorieRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-
 use App\Enum\CategorieType;
+use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CategorieRepository;
+use Doctrine\Common\Collections\Collection;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
 class Categorie
 {
@@ -16,11 +17,13 @@ class Categorie
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['categorie:read'])]
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-#[ORM\Column(enumType: CategorieType::class)]
-private CategorieType$type;
+    #[Groups(['categorie:read'])]
+    #[ORM\Column(enumType: CategorieType::class)]
+    private CategorieType $type;
 
     /**
      * @var Collection<int, Prestation>
