@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ReservationRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use App\Enum\StatutReservation;
 use App\Entity\User;
+use Doctrine\DBAL\Types\Types;
+use App\Enum\Statut;
+use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ReservationRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
@@ -38,9 +38,9 @@ class Reservation
     #[Groups(['reservation:read'])]
     private ?\DateTime $endTime = null;
 
-    #[ORM\Column(enumType: StatutReservation::class)]
+    #[ORM\Column(enumType: Statut::class)]
     #[Groups(['reservation:read'])]
-    private StatutReservation $statut;
+    private Statut $statut;
 
     #[ORM\Column]
     #[Groups(['reservation:read'])]
@@ -116,12 +116,12 @@ class Reservation
         return $this;
     }
 
-    public function getStatut(): ?StatutReservation
+    public function getStatut(): ?Statut
     {
         return $this->statut;
     }
 
-    public function setStatut(StatutReservation $statut): static
+    public function setStatut(Statut $statut): static
     {
         $this->statut = $statut;
 

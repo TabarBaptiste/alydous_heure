@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Reservation;
-use App\Enum\StatutReservation;
+use App\Enum\Statut;
 use App\Repository\PrestationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReservationRepository;
@@ -78,7 +78,7 @@ class ReservationController extends AbstractController
         $reservation->setDate($date);
         $reservation->setStartTime($startDateTime);
         $reservation->setEndTime($endDateTime);
-        $reservation->setStatut(StatutReservation::EN_ATTENTE);
+        $reservation->setStatut(Statut::EN_ATTENTE);
 
         $em->persist($reservation);
         $em->flush();
@@ -178,13 +178,13 @@ class ReservationController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         $newStatut = $data['statut'] ?? null;
-        $statutValues = array_map(fn($case) => $case->value, StatutReservation::cases());
+        $statutValues = array_map(fn($case) => $case->value, Statut::cases());
 
         if (!in_array($newStatut, $statutValues)) {
             return new JsonResponse(['message' => 'Statut invalide'], Response::HTTP_BAD_REQUEST);
         }
 
-        $reservation->setStatut(StatutReservation::from($newStatut));
+        $reservation->setStatut(Statut::from($newStatut));
         $em->flush();
 
         return new JsonResponse(['message' => 'Statut mis à jour']);

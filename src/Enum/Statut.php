@@ -1,7 +1,7 @@
 <?php
 namespace App\Enum;
 
-enum StatutReservation: string
+enum Statut: string
 {
     case EN_ATTENTE = 'en_attente';
     case CONFIRMEE = 'confirmee';

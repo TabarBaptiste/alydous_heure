@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\AchatRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Enum\Statut;
+use App\Repository\AchatRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: AchatRepository::class)]
 class Achat
@@ -13,20 +15,25 @@ class Achat
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['achat:read'])]
     #[ORM\ManyToOne(inversedBy: 'achats')]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'achats')]
+    #[Groups(['achat:read'])]
     private ?Produit $produit = null;
 
+    #[Groups(['achat:read'])]
     #[ORM\Column]
     private ?int $quantite = null;
 
+    #[Groups(['achat:read'])]
     #[ORM\Column]
     private ?\DateTime $dateAchat = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $statut = null;
+    #[ORM\Column(enumType: Statut::class)]
+    #[Groups(['achat:read'])]
+    private Statut $statut;
 
     public function getId(): ?int
     {
@@ -81,15 +88,25 @@ class Achat
         return $this;
     }
 
-    public function getStatut(): ?string
+    public function getStatut(): ?Statut
     {
         return $this->statut;
     }
 
-    public function setStatut(string $statut): static
+    public function setStatut(Statut $statut): static
     {
         $this->statut = $statut;
 
         return $this;
+    }
+
+    #[Groups(['achat:read'])]
+    public function getPrixTotal(): ?float
+    {
+        if ($this->produit && $this->quantite !== null) {
+            return $this->produit->getPrix() * $this->quantite;
+        }
+
+        return null;
     }
 }

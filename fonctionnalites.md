@@ -60,10 +60,10 @@ Qui retourne les créneaux disponibles calculés dynamiquement.
 
 ## 🛒 ACHATS DE PRODUITS
 
-* [ ] 📄 Lister ses achats (client)
-* [ ] 📄 Admin : lister tous les achats
-* [ ] ✅ Effectuer un achat (client) — sans paiement en ligne, juste une commande
-* [ ] 🔁 Admin : changer le statut (livré / annulé)
+* [x] 📄 Lister ses achats (client)
+* [x] 📄 Admin : lister tous les achats
+* [x] ✅ Effectuer un achat (client) — sans paiement en ligne, juste une commande
+* [x] 🔁 Admin : changer le statut (livré / annulé)
 
 ---
 
