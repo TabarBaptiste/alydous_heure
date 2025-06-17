@@ -31,7 +31,7 @@ final class PrestationController extends AbstractController
             'description' => $p->getDescription(),
             'prix' => $p->getPrix(),
             'duree' => $p->getDuree(),
-            'categorie' => $p->getCategorie()?->getId(),
+            'categorie' => $p->getCategorie()?->getNom(),
         ], $prestations);
 
         return new JsonResponse($data, 200);
@@ -46,7 +46,7 @@ final class PrestationController extends AbstractController
             'description' => $prestation->getDescription(),
             'prix' => $prestation->getPrix(),
             'duree' => $prestation->getDuree(),
-            'categorie' => $prestation->getCategorie()?->getId(),
+            'categorie' => $prestation->getCategorie()?->getNom(),
         ];
 
         return new JsonResponse($data, 200);
