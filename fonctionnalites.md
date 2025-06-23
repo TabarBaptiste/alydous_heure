@@ -1,4 +1,4 @@
-# Fonctionnalités
+# Fonctionnalités (Backend)
 
 ## 🔐 AUTHENTIFICATION & GESTION DES UTILISATEURS
 
@@ -104,19 +104,3 @@ Qui retourne les créneaux disponibles calculés dynamiquement.
 
 * [ ] 📊 Statistiques simples : nb de réservations, nb d’achats, chiffre d’affaires estimé, créneaux disponibles
 * [ ] 🔍 Rechercher par nom/email/date dans les réservations ou achats
-
----
-
-<!-- ## ✅ Résumé des entités concernées
-
-| Entité        | CRUD Public | CRUD Admin | API spéciale         |
-| ------------- | ----------- | ---------- | -------------------- |
-| User          | Oui         | Oui        | Auth, rôles, profil  |
-| Prestation    | Non         | Oui        | Liste, par catégorie |
-| Produit       | Non         | Oui        | Achats               |
-| Categorie     | Oui         | Oui        | -                    |
-| Disponibilité | Non         | Oui        | Calcul calendrier    |
-| Réservation   | Oui         | Oui        | Gestion planning     |
-| Achat         | Oui         | Oui        | -                    |
-| Témoignage    | Oui         | Oui        | -                    |
-| Galerie       | Oui         | Oui        | -                    | -->
