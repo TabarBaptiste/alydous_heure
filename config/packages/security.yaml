@@ -47,7 +47,9 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api, roles: PUBLIC_ACCESS }
+        - { path: ^/api/reservation, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/achats, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

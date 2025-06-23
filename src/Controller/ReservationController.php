@@ -15,9 +15,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[Route('/api/reservation')]
 class ReservationController extends AbstractController
 {
-    #[Route('/api/reservations', name: 'add_reservation', methods: ['POST'])]
+    #[Route('', name: 'add_reservation', methods: ['POST'])]
     #[IsGranted('ROLE_USER')] public function addReservation(
         Request $request,
         EntityManagerInterface $em,
@@ -87,7 +88,7 @@ class ReservationController extends AbstractController
     }
 
 
-    #[Route('/api/reservations/mine', name: 'get_my_reservations', methods: ['GET'])]
+    #[Route('/mine', name: 'get_my_reservations', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function getMyReservations(ReservationRepository $repo): JsonResponse
     {
@@ -97,7 +98,7 @@ class ReservationController extends AbstractController
         return $this->json($reservations, 200, [], ['groups' => 'reservation:read']);
     }
 
-    #[Route('/api/reservation/{id}', name: 'get_reservations_by_id', methods: ['GET'])]
+    #[Route('/{id}', name: 'get_reservations_by_id', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function getReservationsById(int $id, Reservation $reservation): JsonResponse
     {
@@ -114,7 +115,7 @@ class ReservationController extends AbstractController
         return $this->json($data, 200, [], ['groups' => 'reservation:read']);
     }
 
-    #[Route('/api/reservations', name: 'get_all_reservations', methods: ['GET'])]
+    #[Route('', name: 'get_all_reservations', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function getAllReservations(ReservationRepository $repo): JsonResponse
     {
@@ -123,7 +124,7 @@ class ReservationController extends AbstractController
         return $this->json($reservations, 200, [], ['groups' => 'reservation:read']);
     }
 
-    #[Route('/api/reservations/{id}', name: 'update_reservation', methods: ['PUT'])]
+    #[Route('/{id}', name: 'update_reservation', methods: ['PUT'])]
     #[IsGranted('ROLE_USER')]
     public function updateReservation(int $id, Request $request, ReservationRepository $repo, EntityManagerInterface $em): JsonResponse
     {
@@ -147,7 +148,7 @@ class ReservationController extends AbstractController
         return new JsonResponse(['message' => 'Réservation modifiée']);
     }
 
-    #[Route('/api/reservations/{id}', name: 'delete_reservation', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'delete_reservation', methods: ['DELETE'])]
     #[IsGranted('ROLE_USER')]
     public function deleteReservation(int $id, ReservationRepository $repo, EntityManagerInterface $em): JsonResponse
     {
@@ -167,7 +168,7 @@ class ReservationController extends AbstractController
         return new JsonResponse(['message' => 'Réservation supprimée']);
     }
 
-    #[Route('/api/reservations/{id}/statut', name: 'change_reservation_statut', methods: ['PATCH'])]
+    #[Route('/{id}/statut', name: 'change_reservation_statut', methods: ['PATCH'])]
     #[IsGranted('ROLE_ADMIN')]
     public function changeStatut(int $id, Request $request, ReservationRepository $repo, EntityManagerInterface $em): JsonResponse
     {
