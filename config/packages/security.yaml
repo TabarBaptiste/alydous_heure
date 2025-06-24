@@ -43,13 +43,18 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
-        - { path: ^/api/register, roles: PUBLIC_ACCESS }
-        - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api, roles: PUBLIC_ACCESS }
+        # 🔐 Pages protégées par authentification
         - { path: ^/api/reservation, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/achats, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/me, roles: IS_AUTHENTICATED_FULLY }
+
+        # ✅ Pages publiques
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+
+        # 🌐 Toutes les autres routes API sont publiques (liste produits, prestations, etc.)
+        - { path: ^/api, roles: PUBLIC_ACCESS }
+
 
 when@test:
     security:

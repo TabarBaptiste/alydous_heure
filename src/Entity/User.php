@@ -19,21 +19,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['reservation:read', 'achat:read'])]
+    #[Groups(['reservation:read', 'achat:read', 'user:read'])]
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[Groups(['reservation:read', 'achat:read'])]
+    #[Groups(['reservation:read', 'achat:read', 'user:read'])]
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[Groups(['reservation:read', 'achat:read'])]
+    #[Groups(['reservation:read', 'achat:read', 'user:read'])]
     #[ORM\Column(length: 255)]
     private ?string $prenom = null;
 
+    #[Groups(['user:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $telephone = null;
 
