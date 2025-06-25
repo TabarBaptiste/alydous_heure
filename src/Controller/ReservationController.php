@@ -19,7 +19,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ReservationController extends AbstractController
 {
     #[Route('', name: 'add_reservation', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')] public function addReservation(
+    #[IsGranted('ROLE_USER')]
+    public function addReservation(
         Request $request,
         EntityManagerInterface $em,
         PrestationRepository $prestationRepo,
@@ -29,15 +30,24 @@ class ReservationController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $user = $this->getUser();
 
-        $prestation = $prestationRepo->find($data['prestation_id']);
+        // 1) Vérifier la prestation
+        $prestation = $prestationRepo->find($data['prestation_id'] ?? null);
         if (!$prestation) {
             return new JsonResponse(['error' => 'Prestation introuvable.'], 404);
         }
 
-        $date = new \DateTime($data['date']);
-        $startTime = new \DateTime($data['startTime']);
+        // 2) Construire les DateTime demandés
+        try {
+            $date = new \DateTime($data['date']);
+            $heure = new \DateTime($data['startTime']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Format de date/heure invalide.'], 400);
+        }
+        $startDateTime = new \DateTime($date->format('Y-m-d') . ' ' . $heure->format('H:i'));
+        $duration = $prestation->getDuree();
+        $endDateTime = (clone $startDateTime)->modify("+{$duration} minutes");
 
-        // Récupérer la disponibilité du jour
+        // 3) Récupérer toutes les plages dispos du jour
         $joursFr = [
             'Monday' => 'Lundi',
             'Tuesday' => 'Mardi',
@@ -47,39 +57,46 @@ class ReservationController extends AbstractController
             'Saturday' => 'Samedi',
             'Sunday' => 'Dimanche',
         ];
-        $jour = $joursFr[$date->format('l')] ?? $date->format('l');
-        $disponibilite = $dispoRepo->findOneBy(['jour' => $jour, 'isDisponible' => true]);
-        if (!$disponibilite) {
+        $jourKey = $joursFr[$date->format('l')] ?? $date->format('l');
+        $plages = $dispoRepo->findBy([
+            'jour' => $jourKey,
+            'isDisponible' => true,
+        ]);
+
+        if (empty($plages)) {
             return new JsonResponse(['error' => 'Aucune disponibilité ce jour-là.'], 400);
         }
 
-        // Fusionner date + heure demandée
-        $startDateTime = new \DateTime($date->format('Y-m-d') . ' ' . $startTime->format('H:i'));
-        $duration = $prestation->getDuree();
-        $endDateTime = (clone $startDateTime)->modify("+$duration minutes");
+        // 4) Vérifier que le créneau demandé est **dans au moins une** des plages
+        $valid = false;
+        foreach ($plages as $plage) {
+            $plageStart = new \DateTime($date->format('Y-m-d') . ' ' . $plage->getStartTime()->format('H:i'));
+            $plageEnd = new \DateTime($date->format('Y-m-d') . ' ' . $plage->getEndTime()->format('H:i'));
 
-        // Vérifier si le créneau demandé est dans la plage de disponibilité
-        $dispoStart = new \DateTime($date->format('Y-m-d') . ' ' . $disponibilite->getStartTime()->format('H:i'));
-        $dispoEnd = new \DateTime($date->format('Y-m-d') . ' ' . $disponibilite->getEndTime()->format('H:i'));
-
-        if ($startDateTime < $dispoStart || $endDateTime > $dispoEnd) {
+            if ($startDateTime >= $plageStart && $endDateTime <= $plageEnd) {
+                $valid = true;
+                break;
+            }
+        }
+        if (!$valid) {
             return new JsonResponse(['error' => 'Le créneau est en dehors des heures disponibles.'], 400);
         }
 
-        // Vérifier les conflits de réservation
+        // 5) Vérifier les conflits avec d’autres réservations
         $conflicts = $reservationRepo->findConflictingReservations($date, $startDateTime, $endDateTime);
         if (count($conflicts) > 0) {
             return new JsonResponse(['error' => 'Ce créneau est déjà réservé.'], 400);
         }
 
-        // Enregistrer
+        // 6) Enregistrer la réservation
         $reservation = new Reservation();
-        $reservation->setUser($user);
-        $reservation->setPrestation($prestation);
-        $reservation->setDate($date);
-        $reservation->setStartTime($startDateTime);
-        $reservation->setEndTime($endDateTime);
-        $reservation->setStatut(Statut::EN_ATTENTE);
+        $reservation
+            ->setUser($user)
+            ->setPrestation($prestation)
+            ->setDate($date)
+            ->setStartTime($startDateTime)
+            ->setEndTime($endDateTime)
+            ->setStatut(Statut::EN_ATTENTE);
 
         $em->persist($reservation);
         $em->flush();
