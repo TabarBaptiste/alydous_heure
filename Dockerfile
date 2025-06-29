@@ -1,33 +1,41 @@
+# --- Étape unique pour Symfony + Apache ---
+
 FROM php:8.2-apache
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git unzip zip curl libicu-dev libpq-dev libonig-dev libzip-dev \
+# 1) Installer les dépendances système et PHP
+RUN apt-get update \
+    && apt-get install -y git unzip zip curl libicu-dev libpq-dev libonig-dev libzip-dev \
     libjpeg-dev libpng-dev libwebp-dev libfreetype6-dev \
-    && docker-php-ext-install intl pdo pdo_mysql zip opcache
+    && docker-php-ext-install intl pdo pdo_mysql zip opcache \
+    && a2enmod rewrite \
+    && rm -rf /var/lib/apt/lists/*
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
-
-# Set Apache to serve from Symfony's public directory
+# 2) Configurer Apache pour servir /var/www/html/public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+RUN sed -ri 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+    /etc/apache2/sites-available/000-default.conf
 
-# Set working directory (root du projet Symfony)
+# 3) Pré‑copier composer.* pour tirer parti du cache Docker
 WORKDIR /var/www/html
+COPY composer.json composer.lock ./
 
-# Copy full Symfony project
+# 4) Installer Composer et les dépendances PHP
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer \
+    && composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
+
+# 5) Copier tout le code de l’app
 COPY . .
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /usr/local/bin/composer
+# 6) (Optionnel) Exécuter les scripts post‑install une fois la BDD dispo
+#    Tu pourras lancer manuellement via un entrypoint ou Render Start Command
+RUN composer run-script post-install-cmd --no-interaction
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
-# Permissions
+# 7) Mettre les bons droits
 RUN chown -R www-data:www-data /var/www/html
 
-# Expose port 80
+# 8) Exposer le port HTTP
 EXPOSE 80
+
+# 9) Lancer Apache au démarrage
+CMD ["apache2-foreground"]
