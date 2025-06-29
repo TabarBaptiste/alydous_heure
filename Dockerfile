@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod rewrite
 
 # Set working dir
-WORKDIR /var/www/html
+WORKDIR /var/www/html/public
 
 # Copy app source
 COPY . .
@@ -22,7 +22,14 @@ RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/lo
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Permissions
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data /var/www/html/public
+
+# Set Apache to serve from Symfony's public/ directory
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+# Adapter la config Apache
+RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
 # Expose port
 EXPOSE 80
+
