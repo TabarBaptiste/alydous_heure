@@ -13,7 +13,9 @@ class TestController
         $privatePath = $_ENV['JWT_SECRET_KEY'];
         $exists = file_exists($privatePath) ? 'OK' : 'NOT FOUND';
         $readable = is_readable($privatePath) ? 'OK' : 'NOT READABLE';
+        $perms = substr(sprintf('%o', fileperms($privatePath)), -4);
 
-        return new Response("JWT Secret Path: $privatePath\nExists: $exists\nReadable: $readable");
+        return new Response("JWT Secret Path: $privatePath \n<br>Exists: $exists \n<br>Readable: $readable \n<br>Permissions: $perms");
+
     }
 }
