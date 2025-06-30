@@ -32,10 +32,9 @@ EXPOSE 80
 
 # 7) Au démarrage, copier les clés JWT injectées par Render, exécuter les migrations et lancer Apache
 CMD ["sh", "-c", "\
-      # Copier les clés JWT si présentes dans /etc/secrets\
+      mkdir -p config/jwt && \
       if [ -f /etc/secrets/private.pem ]; then cp /etc/secrets/private.pem config/jwt/private.pem && chmod 644 config/jwt/private.pem; fi && \
       if [ -f /etc/secrets/public.pem ]; then cp /etc/secrets/public.pem config/jwt/public.pem && chmod 644 config/jwt/public.pem; fi && \
-      # Exécuter les migrations\
       php bin/console doctrine:migrations:migrate --no-interaction && \
-      # Lancer Apache\
       apache2-foreground"]
+
