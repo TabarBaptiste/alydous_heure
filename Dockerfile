@@ -16,7 +16,7 @@ RUN sed -ri 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-avail
 WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 
-# 4) Installer Composer et les dépendances **sans** scripts auto-scripts
+# 4) Installer Composer et les dépendances sans scripts auto-scripts
 RUN curl -sS https://getcomposer.org/installer | php \
  && mv composer.phar /usr/local/bin/composer \
  && COMPOSER_ALLOW_SUPERUSER=1 \
@@ -25,13 +25,17 @@ RUN curl -sS https://getcomposer.org/installer | php \
 # 5) Copier tout le reste du projet (src/, public/, config/, vendor/, …)
 COPY . .
 
-# 6) Permissions
+# 6) Mettre les bons droits pour Apache
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
 
-# 7) Au démarrage du container, exécuter les migrations puis lancer Apache
+# 7) Au démarrage, copier les clés JWT injectées par Render, exécuter les migrations et lancer Apache
 CMD ["sh", "-c", "\
+      # Copier les clés JWT si présentes dans /etc/secrets\
+      if [ -f /etc/secrets/private.pem ]; then cp /etc/secrets/private.pem config/jwt/private.pem && chmod 644 config/jwt/private.pem; fi && \
+      if [ -f /etc/secrets/public.pem ]; then cp /etc/secrets/public.pem config/jwt/public.pem && chmod 644 config/jwt/public.pem; fi && \
+      # Exécuter les migrations\
       php bin/console doctrine:migrations:migrate --no-interaction && \
-      apache2-foreground \
-    "]
+      # Lancer Apache\
+      apache2-foreground"]
