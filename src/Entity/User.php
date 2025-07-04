@@ -41,6 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = ['ROLE_USER'];
 
+    #[Groups(['user:read'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
