@@ -30,6 +30,7 @@ class Produit
     #[ORM\Column(nullable: true)]
     private ?int $stock = null;
 
+    #[Groups(['achat:read'])]
     #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Categorie $categorie = null;
 

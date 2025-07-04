@@ -46,7 +46,7 @@ final class ProduitController extends AbstractController
             'description' => $produit->getDescription(),
             'prix' => $produit->getPrix(),
             'stock' => $produit->getStock(),
-            'categorie' => $produit->getCategorie()?->getId(),
+            'categorie' => $produit->getCategorie()?->getNom(),
         ];
 
         return new JsonResponse($data, 200);
