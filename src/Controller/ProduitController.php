@@ -58,6 +58,14 @@ final class ProduitController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+        // Validation: prix et stock >= 0
+        if (isset($data['prix']) && $data['prix'] < 0) {
+            return new JsonResponse(['error' => 'Le prix ne peut pas être inférieur à 0'], 400);
+        }
+        if (isset($data['stock']) && $data['stock'] < 0) {
+            return new JsonResponse(['error' => 'Le stock ne peut pas être inférieur à 0'], 400);
+        }
+
         $produit = new Produit();
         $produit->setTitre($data['titre']);
         $produit->setDescription($data['description'] ?? null);
@@ -66,7 +74,7 @@ final class ProduitController extends AbstractController
 
         // Si tu veux charger une catégorie depuis son ID
         // if (isset($data['categorie_id'])) {
-        $categorie = $em->getRepository(\App\Entity\Categorie::class)->find(5);
+        $categorie = $em->getRepository(\App\Entity\Categorie::class)->find(6);
         $produit->setCategorie($categorie);
         // }
 
@@ -82,6 +90,12 @@ final class ProduitController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+        if (isset($data['prix']) && $data['prix'] < 0) {
+            return new JsonResponse(['error' => 'Le prix ne peut pas être inférieur à 0'], 400);
+        }
+        if (isset($data['stock']) && $data['stock'] < 0) {
+            return new JsonResponse(['error' => 'Le stock ne peut pas être inférieur à 0'], 400);
+        }
         $produit->setTitre($data['titre'] ?? $produit->getTitre());
         $produit->setDescription($data['description'] ?? $produit->getDescription());
         $produit->setPrix($data['prix'] ?? $produit->getPrix());

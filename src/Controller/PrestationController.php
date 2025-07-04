@@ -58,6 +58,13 @@ final class PrestationController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+        if (isset($data['prix']) && $data['prix'] < 0) {
+            return new JsonResponse(['error' => 'Le prix ne peut pas être inférieur à 0'], 400);
+        }
+        if (isset($data['duree']) && $data['duree'] < 0) {
+            return new JsonResponse(['error' => 'La durée ne peut pas être inférieur à 0'], 400);
+        }
+
         $prestation = new Prestation();
         $prestation->setTitre($data['titre']);
         $prestation->setDescription($data['description'] ?? null);
@@ -81,6 +88,13 @@ final class PrestationController extends AbstractController
     public function update(Prestation $prestation, Request $request, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+
+        if (isset($data['prix']) && $data['prix'] < 0) {
+            return new JsonResponse(['error' => 'Le prix ne peut pas être inférieur à 0'], 400);
+        }
+        if (isset($data['duree']) && $data['duree'] < 0) {
+            return new JsonResponse(['error' => 'La durée ne peut pas être inférieur à 0'], 400);
+        }
 
         $prestation->setTitre($data['titre'] ?? $prestation->getTitre());
         $prestation->setDescription($data['description'] ?? $prestation->getDescription());
