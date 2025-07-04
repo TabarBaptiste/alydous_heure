@@ -104,29 +104,29 @@ class ReservationController extends AbstractController
         return new JsonResponse(['message' => 'Réservation enregistrée.'], 201);
     }
 
-    // #[Route('', name: 'get_reservations_by_date', methods: ['GET'])]
-    // public function getReservationsByDate(Request $request, ReservationRepository $repo): JsonResponse
-    // {
-    //     $dateParam = $request->query->get('date');
-    //     if (!$dateParam) {
-    //         return new JsonResponse(['error' => 'Paramètre date manquant'], 400);
-    //     }
-    //     try {
-    //         $date = new \DateTime($dateParam);
-    //     } catch (\Exception $e) {
-    //         return new JsonResponse(['error' => 'Format de date invalide'], 400);
-    //     }
+    #[Route('', name: 'get_reservations_by_date', methods: ['GET'])]
+    public function getReservationsByDate(Request $request, ReservationRepository $repo): JsonResponse
+    {
+        $dateParam = $request->query->get('date');
+        if (!$dateParam) {
+            return new JsonResponse(['error' => 'Paramètre date manquant'], 400);
+        }
+        try {
+            $date = new \DateTime($dateParam);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Format de date invalide'], 400);
+        }
 
-    //     $reservations = $repo->findBy(['date' => $date]);
+        $reservations = $repo->findBy(['date' => $date]);
 
-    //     // On renvoie seulement start/end pour filtrage
-    //     $slots = array_map(fn(Reservation $r) => [
-    //         'start' => $r->getStartTime()->format('H:i'),
-    //         'end' => $r->getEndTime()->format('H:i'),
-    //     ], $reservations);
+        // On renvoie seulement start/end pour filtrage
+        $slots = array_map(fn(Reservation $r) => [
+            'start' => $r->getStartTime()->format('H:i'),
+            'end' => $r->getEndTime()->format('H:i'),
+        ], $reservations);
 
-    //     return new JsonResponse($slots);
-    // }
+        return new JsonResponse($slots);
+    }
 
     #[Route('/mine', name: 'get_my_reservations', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
