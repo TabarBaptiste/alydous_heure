@@ -13,6 +13,7 @@ class Achat
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['achat:read'])]
     private ?int $id = null;
 
     #[Groups(['achat:read'])]
