@@ -18,6 +18,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/api/reservation')]
 class ReservationController extends AbstractController
 {
+
+    #[Route('', name: 'get_all_reservations', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function getAllReservations(ReservationRepository $repo): JsonResponse
+    {
+        $reservations = $repo->findAll();
+        // dd($reservations);
+
+        return $this->json($reservations, 200, [], ['groups' => 'reservation:read']);
+    }
+
     #[Route('', name: 'add_reservation', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function addReservation(
@@ -104,7 +115,7 @@ class ReservationController extends AbstractController
         return new JsonResponse(['message' => 'Réservation enregistrée.'], 201);
     }
 
-    #[Route('', name: 'get_reservations_by_date', methods: ['GET'])]
+    #[Route('/date', name: 'get_reservations_by_date', methods: ['GET'])]
     public function getReservationsByDate(Request $request, ReservationRepository $repo): JsonResponse
     {
         $dateParam = $request->query->get('date');
@@ -153,15 +164,6 @@ class ReservationController extends AbstractController
         ];
 
         return $this->json($data, 200, [], ['groups' => 'reservation:read']);
-    }
-
-    #[Route('', name: 'get_all_reservations', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function getAllReservations(ReservationRepository $repo): JsonResponse
-    {
-        $reservations = $repo->findAll();
-
-        return $this->json($reservations, 200, [], ['groups' => 'reservation:read']);
     }
 
     #[Route('/{id}', name: 'update_reservation', methods: ['PUT'])]
