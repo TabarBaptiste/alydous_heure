@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\ExceptionDisponibiliteRepository;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -104,5 +105,56 @@ final class DisponibiliteController extends AbstractController
         return new JsonResponse(['message' => 'Disponibilité supprimée']);
     }
 
+    #[Route('/availability-overview', methods: ['GET'])]
+    public function overview(
+        Request $rq,
+        DisponibiliteRepository $dRepo,
+        ExceptionDisponibiliteRepository $eRepo
+    ): JsonResponse {
+        $start = new \DateTime($rq->query->get('start'));
+        $end = new \DateTime($rq->query->get('end'));
+
+        // 1) Récupérer les règles hebdo
+        $allDispo = $dRepo->findBy(['isDisponible' => true]);
+        // indexer par jour-fr : Lundi → [ {start,end},… ]
+        $weekly = [];
+        foreach ($allDispo as $d) {
+            $weekly[$d->getJour()][] = [
+                'start' => $d->getStartTime()->format('H:i'),
+                'end' => $d->getEndTime()->format('H:i'),
+            ];
+        }
+
+        // 2) Récupérer toutes les exceptions entre start et end
+        $exceptions = $eRepo->findBetween($start, $end); // à implémenter
+        // grouper par date
+        $excByDate = [];
+        foreach ($exceptions as $ex) {
+            $type = $ex->isDisponible() ? 'add' : 'remove';
+            $excByDate[$ex->getDate()->format('Y-m-d')][] = [
+                'type' => $type,
+                'start' => $ex->getStartTime()?->format('H:i'),
+                'end' => $ex->getEndTime()?->format('H:i'),
+                'commentaire' => $ex->getCommentaire(),
+            ];
+        }
+
+        // 3) Parcourir chaque date dans l’intervalle
+        $period = new \DatePeriod($start, new \DateInterval('P1D'), $end->modify('+1 day'));
+        $output = [];
+        foreach ($period as $day) {
+            $jsDate = $day->format('Y-m-d');
+            $frDay = $day->format('l');            // English day name
+            // ou ta map pour obtenir Lundi, Mardi…
+            $weeklySlots = $weekly[$frDay] ?? [];
+            $output[] = [
+                'date' => $jsDate,
+                'weeklySlots' => $weeklySlots,
+                'exceptions' => $excByDate[$jsDate] ?? []
+            ];
+        }
+
+        return $this->json($output);
+    }
 
 }
