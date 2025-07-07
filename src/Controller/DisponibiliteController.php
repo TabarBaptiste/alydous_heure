@@ -34,6 +34,25 @@ final class DisponibiliteController extends AbstractController
         return $this->json($grouped);
     }
 
+    #[Route('/all', name: 'disponibilites', methods: ['GET'])]
+    public function getDisponibilites(DisponibiliteRepository $repo): JsonResponse
+    {
+        $dispos = $repo->findAll();
+
+        $grouped = [];
+        foreach ($dispos as $dispo) {
+            $jour = $dispo->getJour();
+            $grouped[$jour][] = [
+                'id' => $dispo->getId(),
+                'start' => $dispo->getStartTime()->format('H:i'),
+                'end' => $dispo->getEndTime()->format('H:i'),
+                'is_disponible' => $dispo->isDisponible(),
+            ];
+        }
+
+        return $this->json($grouped);
+    }
+
     #[IsGranted('ROLE_ADMIN')]
     #[Route('', name: 'add_disponibilite', methods: ['POST'])]
     public function addDisponibilite(Request $request, EntityManagerInterface $em): JsonResponse
@@ -59,13 +78,20 @@ final class DisponibiliteController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $disponibilite->setJour($data['jour'] ?? $disponibilite->getJour());
-        $disponibilite->setStartTime($data['startTime'] ?? $disponibilite->getStartTime());
-        $disponibilite->setEndTime($data['endTime'] ?? $disponibilite->getEndTime());
+
+        if (isset($data['startTime'])) {
+            $disponibilite->setStartTime(new \DateTime($data['startTime']));
+        }
+
+        if (isset($data['endTime'])) {
+            $disponibilite->setEndTime(new \DateTime($data['endTime']));
+        }
+
         $disponibilite->setIsDisponible($data['isDisponible'] ?? $disponibilite->isDisponible());
 
         $em->flush();
 
-        return new JsonResponse(['message' => 'Disponibilité mis à jour']);
+        return new JsonResponse(['message' => 'Disponibilité mise à jour']);
     }
 
     #[IsGranted('ROLE_ADMIN')]
