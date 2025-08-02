@@ -1,12 +1,17 @@
 nelmio_cors:
-  defaults:
-    origin_regex: true
-    allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
-    allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
-    allow_headers: ['Content-Type', 'Authorization']
-    expose_headers: ['Link']
-    max_age: 3600
-
-  paths:
-    '^/':
-      allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
+    defaults:
+        origin_regex: true
+        allow_origin: ['^https?://(localhost|127\.0\.0\.1|.*netlify\.app)(:[0-9]+)?$']
+        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+        allow_headers: ['Content-Type', 'Authorization']
+        expose_headers: ['Link', 'Authorization']
+        max_age: 3600
+        hosts: []
+    paths:
+        '^/':
+            origin_regex: true
+            allow_origin: ['^https?://(localhost|127\.0\.0\.1|.*netlify\.app)(:[0-9]+)?$']
+            allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+            allow_headers: ['Content-Type', 'Authorization']
+            expose_headers: ['Authorization']
+            max_age: 3600
