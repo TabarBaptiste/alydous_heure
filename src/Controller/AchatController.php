@@ -63,28 +63,43 @@ final class AchatController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function getAllAchats(Request $request, AchatRepository $repo): JsonResponse
     {
-        $criteria = [];
-        $order = ['dateAchat' => 'DESC'];
+        $userId = $request->query->get('userId');
+        $statut = $request->query->get('statut');
+        $date = $request->query->get('date');
 
-        if ($userId = $request->query->get('userId')) {
-            $criteria['user'] = $userId;
-        }
+        try {
+            $qb = $repo->createQueryBuilder('a');
 
-        if ($date = $request->query->get('date')) {
-            try {
-                $criteria['dateAchat'] = new \DateTime($date);
-            } catch (\Exception $e) {
-                return new JsonResponse(['error' => 'Date invalide'], 400);
+            // Filtre par date (entre 00:00 et 23:59 du jour donné)
+            if ($date) {
+                $dateStart = new \DateTime($date . ' 00:00:00');
+                $dateEnd = new \DateTime($date . ' 23:59:59');
+                $qb->andWhere('a.dateAchat BETWEEN :start AND :end')
+                    ->setParameter('start', $dateStart)
+                    ->setParameter('end', $dateEnd);
             }
+
+            // Filtre par utilisateur
+            if ($userId) {
+                $qb->andWhere('a.user = :userId')
+                    ->setParameter('userId', $userId);
+            }
+
+            // Filtre par statut
+            if ($statut) {
+                $qb->andWhere('a.statut = :statut')
+                    ->setParameter('statut', $statut);
+            }
+
+            // Tri par date décroissante
+            $qb->orderBy('a.dateAchat', 'DESC');
+
+            $achats = $qb->getQuery()->getResult();
+
+            return $this->json($achats, 200, [], ['groups' => 'achat:read']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Paramètres invalides ou erreur de traitement.'], 400);
         }
-
-        if ($statut = $request->query->get('statut')) {
-            $criteria['statut'] = $statut;
-        }
-
-        $achats = $repo->findBy($criteria, $order);
-
-        return $this->json($achats, 200, [], ['groups' => 'achat:read']);
     }
 
     #[Route('/{id}/statut', name: 'change_achat_statut', methods: ['PATCH'])]
