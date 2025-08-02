@@ -61,9 +61,28 @@ final class AchatController extends AbstractController
 
     #[Route('', name: 'get_all_achats', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function getAllAchats(AchatRepository $repo): JsonResponse
+    public function getAllAchats(Request $request, AchatRepository $repo): JsonResponse
     {
-        $achats = $repo->findAll();
+        $criteria = [];
+        $order = ['dateAchat' => 'DESC'];
+
+        if ($userId = $request->query->get('userId')) {
+            $criteria['user'] = $userId;
+        }
+
+        if ($date = $request->query->get('date')) {
+            try {
+                $criteria['dateAchat'] = new \DateTime($date);
+            } catch (\Exception $e) {
+                return new JsonResponse(['error' => 'Date invalide'], 400);
+            }
+        }
+
+        if ($statut = $request->query->get('statut')) {
+            $criteria['statut'] = $statut;
+        }
+
+        $achats = $repo->findBy($criteria, $order);
 
         return $this->json($achats, 200, [], ['groups' => 'achat:read']);
     }

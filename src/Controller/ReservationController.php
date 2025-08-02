@@ -21,10 +21,32 @@ class ReservationController extends AbstractController
 
     #[Route('', name: 'get_all_reservations', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function getAllReservations(ReservationRepository $repo): JsonResponse
+    public function getAllReservations(Request $request, ReservationRepository $repo): JsonResponse
     {
-        $reservations = $repo->findAll();
-        // dd($reservations);
+        $qb = $repo->createQueryBuilder('r')
+            ->join('r.user', 'u')
+            ->addSelect('u')
+            ->orderBy('r.date', 'DESC');
+
+        // Filtre par utilisateur
+        if ($userId = $request->query->getInt('userId')) {
+            $qb->andWhere('u.id = :uid')
+                ->setParameter('uid', $userId);
+        }
+
+        // Filtre par date (YYYY-MM-DD)
+        if ($date = $request->query->get('date')) {
+            $qb->andWhere('r.date = :date')
+                ->setParameter('date', new \DateTime($date));
+        }
+
+        // Filtre par statut
+        if ($statut = $request->query->get('statut')) {
+            $qb->andWhere('r.statut = :statut')
+                ->setParameter('statut', $statut);
+        }
+
+        $reservations = $qb->getQuery()->getResult();
 
         return $this->json($reservations, 200, [], ['groups' => 'reservation:read']);
     }
