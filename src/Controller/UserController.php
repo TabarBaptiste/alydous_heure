@@ -19,9 +19,10 @@ final class UserController extends AbstractController
     public function getCurrentUser(NormalizerInterface $normalizer): JsonResponse
     {
         $user = $this->getUser();
-
-        // Tu peux personnaliser les groupes de serialization ici
         $data = $normalizer->normalize($user, null, ['groups' => ['user:read']]);
+
+        $data['nb_reservations'] = count($data['reservations'] ?? []);
+        $data['nb_achats'] = count($data['achats'] ?? []);
 
         return $this->json($data);
     }

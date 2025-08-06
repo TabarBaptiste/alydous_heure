@@ -48,12 +48,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Reservation>
      */
+    #[Groups(['user:read'])]
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user')]
     private Collection $reservations;
 
     /**
      * @var Collection<int, Achat>
      */
+    #[Groups(['user:read'])]
     #[ORM\OneToMany(targetEntity: Achat::class, mappedBy: 'user')]
     private Collection $achats;
 
